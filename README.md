@@ -51,10 +51,13 @@ Arquivos alterados:
 
 ### O que aprendi
 
-- Estruturar um formulário multi-step guiado por dados (`simulationFormSteps`);
-- Persistir e versionar registros no `localStorage` sem quebrar dados antigos (campo opcional);
-- Montar um prompt estruturado e tratar loading, erro e chamadas duplicadas à IA;
-- Reaproveitar componentes compartilhados (`Button`, `PageHero`) para manter a consistência visual.
+Achei que a parte difícil ia ser a integração com a IA, mas a chamada em si é bem simples: é um `fetch` com o prompt. O trabalho mesmo está em montar um prompt que devolva sempre o mesmo formato de JSON e em lidar com o que acontece quando a resposta não vem. No meu primeiro teste o Gemini respondeu 503 (servidor sobrecarregado) e a tela ficou só com a mensagem de erro. Foi aí que coloquei a nova tentativa automática.
+
+Outra coisa que me pegou foi um cálculo. Testando com renda de 5 mil e uma meta de 15 mil em 12 meses, a IA falava em guardar R$ 1.250 por mês e o card mostrava R$ 2.500. O card estava mostrando quanto sobra do salário, não quanto precisa guardar. Se eu não tivesse comparado as duas coisas, não teria percebido.
+
+Com o histórico eu entendi melhor o `localStorage`. Como já tinha simulações salvas sem data, deixei o `createdAt` opcional para as antigas continuarem abrindo. E como o diagnóstico fica salvo junto com a simulação, reabrir pelo histórico não gasta uma nova chamada na API.
+
+Também levei um susto com mais de mil erros no lint, que no fim eram só quebras de linha do Windows (CRLF). Um `.gitattributes` resolveu.
 
 ---
 
