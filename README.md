@@ -5,9 +5,11 @@
 ## Sobre esta entrega
 
 ### O que o projeto faz
+
 Formulário em etapas (renda, custos fixos, dívidas, meta, valor e prazo) → página de resultado com a economia mensal necessária → diagnóstico personalizado gerado pelo Google Gemini. Tudo roda no navegador, com dados salvos no `localStorage`.
 
 ### Como executar
+
 ```bash
 pnpm install          # ou npm install
 echo "VITE_GEMINI_API_KEY=sua_chave_aqui" > .env
@@ -15,28 +17,40 @@ pnpm dev              # http://localhost:5173
 ```
 
 ### Tecnologias
+
 React 19, TypeScript, Vite, Tailwind CSS 4, React Router, lucide-react, react-loading-skeleton e API do Google Gemini.
 
 ### Melhoria implementada: Histórico de Simulações
+
 A rota `/historico` (antes só um título provisório) agora lista todas as simulações salvas:
+
 - Mais recentes primeiro, com data de criação, meta, valor, prazo e economia mensal;
 - Selo **"Diagnóstico pronto"** quando a IA já gerou o insight (reabrir não gasta nova chamada à API);
 - Clique na simulação para reabrir o resultado; botão de lixeira para excluir (com confirmação);
 - Estado vazio com atalho para criar a primeira simulação.
 
 Arquivos alterados:
+
 - `src/pages/SimulationHistoryPage.tsx` — nova página;
 - `src/hooks/useSimulationStorage.tsx` — novas funções `getAllSimulations` e `deleteSimulation`, e registro de `createdAt`;
 - `src/data/simulation.ts` — campo opcional `createdAt` (simulações antigas continuam funcionando);
 - `src/router.tsx` — rota `/historico` aponta para a nova página.
 
+### Correções extras
+
+- **Economia mensal:** o card mostrava a sobra do orçamento (renda − custos − dívidas) como se fosse o valor necessário. Agora mostra quanto guardar por mês para a meta (custo ÷ prazo) e a sobra fica no subtítulo;
+- **Gemini sobrecarregado:** a chamada à API repete automaticamente até 3 vezes quando recebe 429/500/503;
+- **Lint sem erros:** `.gitattributes` força quebras de linha LF, evitando os erros de `␍` do Prettier no Windows.
+
 ### Como testar o fluxo principal
+
 1. Em `/`, preencha as 6 etapas e clique em **Gerar simulação**;
 2. Veja os cards de resultado e aguarde o diagnóstico da IA;
 3. Clique em **Histórico** no cabeçalho: a simulação aparece com o selo de diagnóstico;
 4. Clique nela para reabrir o resultado ou na lixeira para excluí-la.
 
 ### O que aprendi
+
 - Estruturar um formulário multi-step guiado por dados (`simulationFormSteps`);
 - Persistir e versionar registros no `localStorage` sem quebrar dados antigos (campo opcional);
 - Montar um prompt estruturado e tratar loading, erro e chamadas duplicadas à IA;

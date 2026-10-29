@@ -12,7 +12,7 @@ import { Button } from '@/components/shared/Button'
 import { PageHero } from '@/components/shared/PageHero'
 import type { SimulationRecord } from '@/data/simulation'
 import { useSimulationStorage } from '@/hooks/useSimulationStorage'
-import { parseCurrency } from '@/utils/currency'
+import { calcRequiredMonthlySavings } from '@/utils/simulation'
 
 const formatMoney = (value: number) =>
   `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -88,11 +88,7 @@ export function SimulationHistoryPage() {
                 </p>
                 <p className="text-muted-foreground text-sm">
                   R$ {record.goalAmount} em {record.goalDeadline} meses ·
-                  guardar{' '}
-                  {formatMoney(
-                    parseCurrency(record.goalAmount) /
-                      Number(record.goalDeadline),
-                  )}
+                  guardar {formatMoney(calcRequiredMonthlySavings(record))}
                   /mês
                 </p>
               </Link>

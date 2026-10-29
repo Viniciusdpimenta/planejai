@@ -12,7 +12,10 @@ import { AIInsightsCard } from '@/components/features/SimulationResults/AIInsigh
 import { Card } from '@/components/features/SimulationResults/Card'
 import { PageHero } from '@/components/shared/PageHero'
 import { useSimulationStorage } from '@/hooks/useSimulationStorage'
-import { calcMonthlySavings } from '@/utils/simulation'
+import {
+  calcMonthlySavings,
+  calcRequiredMonthlySavings,
+} from '@/utils/simulation'
 
 export function SimulationResultsPage() {
   const { id } = useParams<{ id: string }>()
@@ -24,7 +27,10 @@ export function SimulationResultsPage() {
     return <p>Simulação não encontrada.</p>
   }
 
-  const monthlySavings = calcMonthlySavings(data)
+  const formatMoney = (value: number) =>
+    `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const requiredSavings = calcRequiredMonthlySavings(data)
+  const monthlyBalance = calcMonthlySavings(data)
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
@@ -49,8 +55,8 @@ export function SimulationResultsPage() {
           variant="primary"
           icon={PiggyBank}
           label="Economia mensal"
-          value={`R$ ${monthlySavings.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          subtitle={'Economia mensal necessária'}
+          value={formatMoney(requiredSavings)}
+          subtitle={`Para a meta · sobra mensal de ${formatMoney(monthlyBalance)}`}
         />
       </div>
       <div className="grid gap-6 lg:grid-cols-3">

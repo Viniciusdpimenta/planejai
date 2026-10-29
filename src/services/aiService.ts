@@ -32,7 +32,16 @@ const API_KEY = String(import.meta.env.VITE_GEMINI_API_KEY)
 const MODEL_NAME = 'gemini-flash-latest'
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`
 
-const callGeminiAPI = async (prompt: string) => {
+// Erros temporários do Gemini (limite de uso ou servidor sobrecarregado)
+const RETRYABLE_STATUS = [429, 500, 503]
+const MAX_ATTEMPTS = 3
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const callGeminiAPI = async (
+  prompt: string,
+  attempt = 1,
+): Promise<GeminiResponse> => {
   const response = await fetch(GEMINI_API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -40,6 +49,11 @@ const callGeminiAPI = async (prompt: string) => {
       contents: [{ parts: [{ text: prompt }] }],
     }),
   })
+
+  if (RETRYABLE_STATUS.includes(response.status) && attempt < MAX_ATTEMPTS) {
+    await wait(2000 * attempt)
+    return callGeminiAPI(prompt, attempt + 1)
+  }
 
   if (!response.ok) {
     throw new Error(`Erro na requisição: ${response.status}`)

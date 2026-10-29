@@ -8,3 +8,13 @@ export function calcMonthlySavings(data: SimulationFormData) {
     parseCurrency(data.debts)
   )
 }
+
+export function calcRequiredMonthlySavings(data: SimulationFormData) {
+  const months = Number(data.goalDeadline)
+
+  if (!months) {
+    return 0
+  }
+
+  return parseCurrency(data.goalAmount) / months
+}
