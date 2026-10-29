@@ -1,5 +1,49 @@
 # Planej.ai: Desenvolvendo um Educador Financeiro com React e IA Generativa
 
+> **Minha entrega do desafio DIO** — versão base do curso + melhoria: **Página de Histórico de Simulações**.
+
+## Sobre esta entrega
+
+### O que o projeto faz
+Formulário em etapas (renda, custos fixos, dívidas, meta, valor e prazo) → página de resultado com a economia mensal necessária → diagnóstico personalizado gerado pelo Google Gemini. Tudo roda no navegador, com dados salvos no `localStorage`.
+
+### Como executar
+```bash
+pnpm install          # ou npm install
+echo "VITE_GEMINI_API_KEY=sua_chave_aqui" > .env
+pnpm dev              # http://localhost:5173
+```
+
+### Tecnologias
+React 19, TypeScript, Vite, Tailwind CSS 4, React Router, lucide-react, react-loading-skeleton e API do Google Gemini.
+
+### Melhoria implementada: Histórico de Simulações
+A rota `/historico` (antes só um título provisório) agora lista todas as simulações salvas:
+- Mais recentes primeiro, com data de criação, meta, valor, prazo e economia mensal;
+- Selo **"Diagnóstico pronto"** quando a IA já gerou o insight (reabrir não gasta nova chamada à API);
+- Clique na simulação para reabrir o resultado; botão de lixeira para excluir (com confirmação);
+- Estado vazio com atalho para criar a primeira simulação.
+
+Arquivos alterados:
+- `src/pages/SimulationHistoryPage.tsx` — nova página;
+- `src/hooks/useSimulationStorage.tsx` — novas funções `getAllSimulations` e `deleteSimulation`, e registro de `createdAt`;
+- `src/data/simulation.ts` — campo opcional `createdAt` (simulações antigas continuam funcionando);
+- `src/router.tsx` — rota `/historico` aponta para a nova página.
+
+### Como testar o fluxo principal
+1. Em `/`, preencha as 6 etapas e clique em **Gerar simulação**;
+2. Veja os cards de resultado e aguarde o diagnóstico da IA;
+3. Clique em **Histórico** no cabeçalho: a simulação aparece com o selo de diagnóstico;
+4. Clique nela para reabrir o resultado ou na lixeira para excluí-la.
+
+### O que aprendi
+- Estruturar um formulário multi-step guiado por dados (`simulationFormSteps`);
+- Persistir e versionar registros no `localStorage` sem quebrar dados antigos (campo opcional);
+- Montar um prompt estruturado e tratar loading, erro e chamadas duplicadas à IA;
+- Reaproveitar componentes compartilhados (`Button`, `PageHero`) para manter a consistência visual.
+
+---
+
 O **Planej.ai** é uma aplicação web de planejamento financeiro pessoal. O usuário preenche um formulário com informações sobre sua renda, gastos e uma meta financeira (como uma viagem ou a compra de um bem), e a aplicação usa inteligência artificial para gerar um diagnóstico personalizado com sugestões práticas, ideias de renda extra e um plano de ação.
 
 Tudo funciona diretamente no navegador: sem backend, sem banco de dados remoto. Os dados são salvos no `localStorage` e as análises são geradas em tempo real pela API do Google Gemini.
